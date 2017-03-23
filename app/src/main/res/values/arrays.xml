@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="uhf_option">
+        <item>連接</item>
+        <item>斷開</item>
+        <item>識別標籤</item>
+        <item>讀取數據</item>
+        <item>寫入數據</item>
+        <item>鎖定標籤</item>
+        <item>銷毀標籤</item>
+        <item>退出</item>
+    </string-array>
+    <string-array name="membanks">
+        <item>RESEVER</item>
+        <item>EPC</item>
+        <item>TID</item>
+        <item>USER</item>
+    </string-array>
+    <string-array name="baudrate">
+        <item>9600</item>
+        <item>19200</item>
+        <item>57600</item>
+        <item>115200</item>
+    </string-array>
+    <string-array name="work_area">
+        <item>中國1</item>
+        <item>中國2</item>
+        <item>美國</item>
+        <item>歐洲</item>
+        <item>韓國</item>
+    </string-array>
+    <string-array name="lock_membank">
+        <item>銷毀密碼</item>
+        <item>訪問密碼</item>
+        <item>EPC區</item>
+        <item>TID區</item>
+        <item>USER區</item>
+    </string-array>
+    <string-array name="lock_type">
+        <item>開放</item>
+        <item>永久開放</item>
+        <item>鎖定</item>
+        <item>永久鎖定</item>
+    </string-array>
+
+
+    <string-array name="stop_bits">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+    <string-array name="data_bits">
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
+    <string-array name="parity">
+        <item>None</item>
+        <item>Odd</item>
+        <item>Even</item>
+        <item >Mark</item>
+        <item >Space</item>
+    </string-array>
+
+    <string-array name="flow_control">
+        <item>None</item>
+        <item>CTS/RTS</item>
+    </string-array>
+</resources>
