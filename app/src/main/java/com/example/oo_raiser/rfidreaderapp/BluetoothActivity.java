@@ -3,6 +3,9 @@ package com.example.oo_raiser.rfidreaderapp;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +17,9 @@ import java.util.HashMap;
 import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
@@ -25,6 +31,7 @@ import com.example.oo_raiser.rfidreaderapp.bluetooth.*;
 public class BluetoothActivity extends AppCompatActivity {
 
     //region ------ 物件宣告 ------
+    private String TAG = "BluetoothActivity";
 
     //bluetooth Adapter
     private BluetoothAdapter btAdapter;
@@ -63,8 +70,6 @@ public class BluetoothActivity extends AppCompatActivity {
     BluetoothSocket socket;
 
     private final int REQUEST_OPEN_BT = 101;
-
-    private String TAG = "BluetoothActivity "; //debug用
 
     private BroadcastReceiver mReceiver; //廣播接受者，監聽藍牙狀態信息
 
@@ -107,10 +112,25 @@ public class BluetoothActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth);
 
+        //initialize the UI
         initView();
 
-
+        //register the Broad Receiver
+        registerBroadReceiver();
     }
+
+    @Override
+    protected void onPause() {
+
+        // 初始化藍牙
+        initBluetooth();
+
+        //設定Handler
+
+        super.onPause();
+    }
+
+    //region --- functions ---
 
     //initialize the UI
     private void initView()
@@ -131,7 +151,136 @@ public class BluetoothActivity extends AppCompatActivity {
         }
         adapter = new SimpleAdapter(this, arrayMenu, R.layout.mainlv_items, new String[]{"menuItem"}, new int[]{R.id.TvMenu});
         LvMain.setAdapter(adapter);
-        //LvMain.setOnClickListener(new Lv);
+        LvMain.setOnItemClickListener(new LvMainItemClickListener());
     }
+
+    //register the Broad Receiver
+    private void registerBroadReceiver()
+    {
+        //new the mReceiver
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent)
+            {
+                String actionStr = intent.getAction();
+                Log.i(TAG,"actionStr: "+actionStr);
+                if(actionStr.equals(BluetoothDevice.ACTION_FOUND))
+                {
+                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                    //if find the different device then add to device list
+                    if(!isFoundDevices(device))
+                    {
+                        foundDevices.add(device);
+                    }
+                    Toast.makeText(BluetoothActivity.this,"找到藍芽設備: "+device.getName(),Toast.LENGTH_SHORT).show();
+                    mHandler.sendEmptyMessage(FOUND_DEVICE);
+
+                }else if(actionStr.equals(BluetoothAdapter.ACTION_DISCOVERY_STARTED)){
+                    mHandler.sendEmptyMessage(START_DISCOVERY);
+                }else if(actionStr.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)){
+                    mHandler.sendEmptyMessage(FINISH_DISCOVERY);
+                }
+            }
+        };
+
+        //register Receiver
+        IntentFilter filter1 = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        IntentFilter filter2 = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+        IntentFilter filter3 = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        registerReceiver(mReceiver ,filter1);
+        registerReceiver(mReceiver ,filter2);
+        registerReceiver(mReceiver ,filter3);
+    }
+
+    //Whether to find the same device (是否找到同一台設備)
+    private boolean isFoundDevices(BluetoothDevice device)
+    {
+        boolean flag = false;
+        if(foundDevices != null && !foundDevices.isEmpty())
+        {
+            for(BluetoothDevice d : foundDevices)
+            {
+                if(device.getAddress().equals(d.getAddress())){
+                   flag = true;
+                }
+            }
+        }
+        return flag;
+    }
+
+    //initialize bluetooth
+    private void initBluetooth()
+    {
+        btAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        //Does this device support Bluetooth?
+        if(btAdapter == null)
+        {
+            Toast.makeText(getApplicationContext(),"此設備不支持藍牙",Toast.LENGTH_SHORT).show();
+        }
+
+        //check that is the Bluetooth available
+        if(!btAdapter.isEnabled())
+        {
+            Intent enableBt = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBt, REQUEST_OPEN_BT);
+        }
+    }
+
+    //connect the  Bluetooth device
+    private void connectBluetooth()
+    {
+        //...
+
+    }
+
+
+    //endregion
+
+    //region --- class ---
+    //class LvMainItemClickListener
+    class LvMainItemClickListener implements AdapterView.OnItemClickListener
+    {
+        //on item click
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+        {
+            HashMap<String,String> item = (HashMap<String,String>) LvMain.getItemAtPosition(position);
+            String itemStr = item.get("menuItem");
+
+            switch (itemStr)
+            {
+                case "連接":
+                    Toast.makeText(BluetoothActivity.this,"連接",Toast.LENGTH_SHORT).show();
+                    break;
+                case "斷開":
+                    Toast.makeText(BluetoothActivity.this,"斷開",Toast.LENGTH_SHORT).show();
+                    break;
+                case "識別標籤":
+                    Toast.makeText(BluetoothActivity.this,"識別標籤",Toast.LENGTH_SHORT).show();
+                    break;
+                case "讀取數據":
+                    Toast.makeText(BluetoothActivity.this,"讀取數據",Toast.LENGTH_SHORT).show();
+                    break;
+                case "寫入數據":
+                    Toast.makeText(BluetoothActivity.this,"寫入數據",Toast.LENGTH_SHORT).show();
+                    break;
+                case "參數設置":
+                    Toast.makeText(BluetoothActivity.this,"參數設置",Toast.LENGTH_SHORT).show();
+                    break;
+                case "鎖定標籤":
+                    Toast.makeText(BluetoothActivity.this,"鎖定標籤",Toast.LENGTH_SHORT).show();
+                    break;
+                case "銷毀標籤":
+                    Toast.makeText(BluetoothActivity.this,"銷毀標籤",Toast.LENGTH_SHORT).show();
+                    break;
+                case "退出":
+                    finish();
+                    break;
+            }
+        }
+    }
+
+    //endregion
 
 }
