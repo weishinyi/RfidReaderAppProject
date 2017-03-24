@@ -461,7 +461,6 @@ public class BluetoothActivity extends AppCompatActivity {
             switch (itemStr)
             {
                 case "連接":
-                    //Toast.makeText(BluetoothActivity.this,"連接",Toast.LENGTH_SHORT).show();
                     if(connFlag)
                     {
                       Toast.makeText(getApplicationContext(),"請先斷開連接，再連接",Toast.LENGTH_SHORT ).show();
@@ -470,7 +469,22 @@ public class BluetoothActivity extends AppCompatActivity {
                     }
                     break;
                 case "斷開":
-                    Toast.makeText(BluetoothActivity.this,"斷開",Toast.LENGTH_SHORT).show();
+                    if(connFlag)
+                    {
+                       if(socket!=null)
+                       {
+                           try{
+                               socket.close();
+                               textTitle.setText("已斷開連接");
+                               connFlag = false;
+                           }catch (Exception e){
+                               e.printStackTrace();
+                           }
+                       }else{
+                           textTitle.setText("已斷開連接");
+                           connFlag = false;
+                       }
+                    }
                     break;
                 case "識別標籤":
                     Toast.makeText(BluetoothActivity.this,"識別標籤",Toast.LENGTH_SHORT).show();
