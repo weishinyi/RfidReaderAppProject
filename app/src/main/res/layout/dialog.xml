@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/colorPrimary"
+        android:padding="5dp"
+        android:text="已配對的藍芽裝置"
+        android:textColor="@color/black"/>
+
+    <ListView
+        android:id="@+id/bondedList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:minHeight="100dp"
+        android:padding="5dp"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/colorPrimary"
+        android:padding="5dp"
+        android:text="已找到的藍芽設備"
+        android:textColor="@color/black" />
+    <ListView
+        android:id="@+id/foundList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:minHeight="100dp"
+        android:padding="5dp"
+        android:textColor="@color/black" />
+
+    <ProgressBar
+        android:id="@+id/discoveryPro"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+
+</LinearLayout>

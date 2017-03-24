@@ -24,7 +24,7 @@ public class MyAdapter extends BaseAdapter{
     private List<BluetoothDevice> list;
 
     //Constructor
-    private MyAdapter(Context c, List<BluetoothDevice> l)
+    public MyAdapter(Context c, List<BluetoothDevice> l)
     {
         context = c;
         list = l;

@@ -4,20 +4,26 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Set;
 
 import android.app.Dialog;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -27,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.oo_raiser.rfidreaderapp.bluetooth.*;
+import com.example.oo_raiser.rfidreaderapp.command.MyAdapter;
 
 public class BluetoothActivity extends AppCompatActivity {
 
@@ -75,7 +82,7 @@ public class BluetoothActivity extends AppCompatActivity {
 
     //endregion
 
-    // Handler 消息處理器..日理萬機...
+    //region --- Handler 消息處理器..日理萬機... ---
     private Handler mHandler = new Handler()
     {
         @Override
@@ -85,16 +92,42 @@ public class BluetoothActivity extends AppCompatActivity {
             switch (msg.what)
             {
                 case FOUND_DEVICE:
-                    //foundList.setAdapter(new );
+                    foundList.setAdapter(new MyAdapter(BluetoothActivity.this, foundDevices));
                     break;
                 case START_DISCOVERY:
+                    discoveryPro.setVisibility(View.VISIBLE);
                     break;
                 case FINISH_DISCOVERY:
+                    discoveryPro.setVisibility(View.GONE);
                     break;
                 case CONNECT_FAIL:
+                    connFlag = false;
+                    Toast.makeText(BluetoothActivity.this,"連接失敗",Toast.LENGTH_SHORT).show();
                     break;
                 case CONNECT_SUCCEED_P:
                 case CONNECT_SUCCEED_N:
+                    Log.i(TAG,"藍芽連接成功");
+                    if(msg.what == CONNECT_SUCCEED_P)
+                    {
+                        //接受執行緒不為Null
+                        if(acceptThread!=null) {
+                            acceptThread.interrupt();
+                        }
+                        socket = connectThread.getSocket();
+                        connectedThread = new ConnectedThread(socket, mHandler);
+                        connectedThread.start();
+
+                    }else {
+                        if(connectThread!=null){
+                            connectThread.interrupt();
+                        }
+                        socket = acceptThread.getSocket();
+                        connectedThread = new ConnectedThread(socket,mHandler);
+                        connectedThread.start();
+                    }
+                    String deviceName = msg.getData().getString("name");
+                    textTitle.setText("已連接: "+deviceName);
+                    connFlag = true;
                     break;
                 case CONNECT_INTERRUPT:
                     Toast.makeText(getApplicationContext(), "連接已斷開,請重新連接", Toast.LENGTH_SHORT).show();
@@ -104,8 +137,9 @@ public class BluetoothActivity extends AppCompatActivity {
             }//end switch
         }
     };
+    //endregion
 
-
+    //region --- Override android functions ---
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,15 +154,120 @@ public class BluetoothActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
+    protected void onResume() {
+        initBluetooth(); //初始化藍牙
+        ConnectedThread.setHandler(mHandler); //設定Handler
 
-        // 初始化藍牙
-        initBluetooth();
-
-        //設定Handler
-
-        super.onPause();
+        super.onResume();
     }
+
+    //退出程序時處理一下後事，取消註冊廣播接收器，中止線程，關閉socket
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //Unregister mReceiver
+        if(mReceiver != null)
+        {
+            unregisterReceiver(mReceiver);
+            mReceiver = null;
+        }
+
+        //interrupt the thread
+        if(connectThread != null)
+        {
+            connectThread.interrupt();
+        }
+        if(connectedThread != null)
+        {
+            connectedThread.interrupt();
+        }
+        if(acceptThread != null)
+        {
+            acceptThread.interrupt();
+        }
+
+        //close the socket
+        if(socket!=null)
+        {
+            try{
+                socket.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    //按返回建
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK)
+        {
+            //Unregister mReceiver
+            if(mReceiver != null)
+            {
+                unregisterReceiver(mReceiver);
+                mReceiver = null;
+            }
+
+            //interrupt the thread
+            if(connectThread != null)
+            {
+                connectThread.interrupt();
+            }
+            if(connectedThread != null)
+            {
+                connectedThread.interrupt();
+            }
+            if(acceptThread != null)
+            {
+                acceptThread.interrupt();
+            }
+
+            //close the socket
+            if(socket!=null)
+            {
+                try{
+                    socket.close();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            //Reminder to turn off Bluetooth
+            if(btAdapter.isEnabled())
+            {
+                Toast.makeText(BluetoothActivity.this, "請手動關閉藍牙", Toast.LENGTH_SHORT).show();
+            }
+
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG, "requestCode: " +requestCode+", resultCode: "+resultCode);
+
+        if(requestCode==REQUEST_OPEN_BT && resultCode!=0)
+        {
+            Toast.makeText(getApplicationContext(), "bluetooth open success!", Toast.LENGTH_SHORT).show();
+            // 查詢所有配對的設備
+            Set<BluetoothDevice> pairedDevices = btAdapter.getBondedDevices();
+            // 判斷需要的設備是否存在
+            if(pairedDevices.size()>0)
+            {
+                for(BluetoothDevice d :pairedDevices)
+                {
+                    Log.i(TAG,"Name: "+d.getName()+"; Address: " + d.getAddress());
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    //endregion
 
     //region --- functions ---
 
@@ -230,8 +369,79 @@ public class BluetoothActivity extends AppCompatActivity {
     //connect the  Bluetooth device
     private void connectBluetooth()
     {
-        //...
+        btAdapter.cancelDiscovery();
+        btAdapter.startDiscovery();
 
+
+        //通過LayoutInflater得到對話框中的三個控件 第一個ListView為局部變量，因為它顯示的是已配對的藍牙設備，不需隨時改變
+		//第二個ListView和ProgressBar為全局變量
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog, null);
+        discoveryPro =(ProgressBar)view.findViewById(R.id.discoveryPro);
+        ListView bondedList = (ListView)view.findViewById(R.id.bondedList);
+        foundList = (ListView)view.findViewById(R.id.foundList);
+
+        //將已配對的藍牙設備顯示到第一個ListView中
+        Set<BluetoothDevice> deviceSet = btAdapter.getBondedDevices();
+        final List<BluetoothDevice> bondedDevices = new ArrayList<BluetoothDevice>();
+        if(deviceSet.size()>0)
+        {
+            for(Iterator<BluetoothDevice>it=deviceSet.iterator(); it.hasNext();)
+            {
+                BluetoothDevice device = (BluetoothDevice)it.next();
+                bondedDevices.add(device);
+            }
+        }
+        bondedList.setAdapter(new MyAdapter(BluetoothActivity.this, bondedDevices));
+
+        //將找到的藍牙設備顯示到第二個ListView中
+        foundDevices = new ArrayList<BluetoothDevice>();
+        foundList.setAdapter(new MyAdapter(BluetoothActivity.this, foundDevices));
+
+        //兩個ListView綁定監聽
+        bondedList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                BluetoothDevice device = bondedDevices.get(position);
+                connect(device);
+            }
+        });
+        foundList.setOnItemClickListener(new AdapterView.OnItemClickListener()
+        {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+            {
+                BluetoothDevice device = foundDevices.get(position);
+                connect(device);
+            }
+        });
+
+        //AlertDialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(BluetoothActivity.this);
+        builder.setMessage("請選擇要連接的藍牙設備").setPositiveButton("取消",
+                new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        btAdapter.cancelDiscovery();
+                    }
+                });
+        builder.setView(view);
+        builder.create();
+        dialog = builder.show();
+
+    }
+
+    //connecting
+    private void connect(BluetoothDevice device)
+    {
+        btAdapter.cancelDiscovery();
+        dialog.dismiss();
+        Toast.makeText(this,"正在連接"+device.getName(),Toast.LENGTH_SHORT).show();
+        connectThread = new ConnectThread(device, mHandler, true);
+        connectThread.start();
     }
 
 
@@ -251,7 +461,13 @@ public class BluetoothActivity extends AppCompatActivity {
             switch (itemStr)
             {
                 case "連接":
-                    Toast.makeText(BluetoothActivity.this,"連接",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(BluetoothActivity.this,"連接",Toast.LENGTH_SHORT).show();
+                    if(connFlag)
+                    {
+                      Toast.makeText(getApplicationContext(),"請先斷開連接，再連接",Toast.LENGTH_SHORT ).show();
+                    }else{
+                        connectBluetooth();
+                    }
                     break;
                 case "斷開":
                     Toast.makeText(BluetoothActivity.this,"斷開",Toast.LENGTH_SHORT).show();

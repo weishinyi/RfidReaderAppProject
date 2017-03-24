@@ -14,7 +14,7 @@ import android.util.Log;
  * 等待遠端藍芽連接的Thread
  */
 
-public class AcceptThread {
+public class AcceptThread extends Thread{
     private static String TAG = "AcceptThread";
 
     private static final int CONNECT_SUCCEED_N = 6;
