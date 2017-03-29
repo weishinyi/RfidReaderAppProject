@@ -285,15 +285,16 @@ public class InventoryTagActivity extends AppCompatActivity {
         });
     }
 
-    //check Sum(計算校驗和)
-    public byte checkSum(byte[] data){
+    //check sum (計算校驗和)
+    public byte checkSum(byte[] data) {
         byte crc = 0x00;
-        //從指令類型累加到參數最後一位
-        for(int i=1; i<data.length-2; i++){
-            crc+=data[i];
+        // 從指令類型累加到參數最後一位
+        for (int i = 1; i < data.length - 2; i++) {
+            crc += data[i];
         }
         return crc;
     }
+
 
     //endregion
 
@@ -368,7 +369,7 @@ public class InventoryTagActivity extends AppCompatActivity {
                             index = index + size;
                             if(count>7)
                             {
-                                Log.i(TAG,"temp: "+Tools.Byte2HexString(temp, temp.length));
+                                //Log.i(TAG,"temp: "+Tools.Byte2HexString(temp, temp.length));
 
                                 //判斷AA022200
                                 if((temp[0]==(byte)0xAA) && (temp[1]==(byte)0x02) && (temp[2]==(byte)0x22) && (temp[3]==(byte)0x00)){
@@ -392,17 +393,19 @@ public class InventoryTagActivity extends AppCompatActivity {
                                     //校驗數據包
                                     byte crc = checkSum(packageBytes);
                                     InventoryInfo info = new InventoryInfo();
-                                    if(crc==packageBytes[len+5]){
+                                    if(crc == packageBytes[len + 5]){
                                         Log.e(TAG,"[RecvThread]checkSum OK!" );
+
                                         //RSSI
                                         info.setRssi(temp[5]);
                                         //PC
                                         info.setPc(new byte[]{temp[6],temp[7]});
                                         //EPC
-                                        byte[] epcBytes = new byte[len-5];
-                                        System.arraycopy(packageBytes, 8, epcBytes, 0, len-5);
+                                        byte[] epcBytes = new byte[len - 5];
+                                        System.arraycopy(packageBytes, 8, epcBytes, 0, len - 5);
                                         info.setEpc(epcBytes);
-                                        Util.play(1,0); //播放提示音
+
+                                        Util.play(1, 0);//播放提示音
                                         addToList(listEPC, info);
                                     }
                                     count = 0;
@@ -410,6 +413,7 @@ public class InventoryTagActivity extends AppCompatActivity {
                                     Arrays.fill(temp,(byte)0x00);
                                 }else {
                                     //包錯誤清空
+                                    //Log.e(TAG,"[RecvThread]包錯誤清空!!!");
                                     count = 0;
                                     index = 0;
                                     Arrays.fill(temp,(byte)0x00);
