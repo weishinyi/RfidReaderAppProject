@@ -19,6 +19,13 @@ public class Tools {
         return str;
     }
 
-
+    public static byte[] intToByte(int i)
+    {
+        byte[] abyte0 = new byte[3];
+        abyte0[2] = (byte) (0xff & i);
+        abyte0[1] = (byte) ((0xff00 & i) >> 8);
+        abyte0[0] = (byte) ((0xff0000 & i) >> 16);
+        return abyte0;
+    }
 
 }

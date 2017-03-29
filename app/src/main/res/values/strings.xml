@@ -19,9 +19,10 @@
     <string name="menbank">儲存區</string>
     <string name="access_password">訪問密碼：</string>
     <string name="addr">地址</string>
-    <string name="read_data">讀數據</string>
-    <string name="readData">讀取數據</string>
-    <string name="write_data">寫數據</string>
+    <string name="read_data">讀取資料</string>
+    <string name="send_data">傳送</string>
+    <string name="readData">讀取資料</string>
+    <string name="write_data">寫入資料</string>
     <string name="serialport_setting">端口設置</string>
     <string name="com_id">COM口：</string>
     <string name="baudrate">波特率：</string>

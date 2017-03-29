@@ -487,22 +487,60 @@ public class BluetoothActivity extends AppCompatActivity {
                     }
                     break;
                 case "識別標籤":
-                    Toast.makeText(BluetoothActivity.this,"識別標籤",Toast.LENGTH_SHORT).show();
+                    if(connFlag)
+                    {
+                        Intent intent = new Intent(BluetoothActivity.this, InventoryTagActivity.class);
+                        startActivity(intent);
+                    }else{
+                        Toast.makeText(BluetoothActivity.this,"請先進行連接",Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(BluetoothActivity.this, InventoryTagActivity.class);
+                        startActivity(intent);
+                    }
                     break;
                 case "讀取數據":
-                    Toast.makeText(BluetoothActivity.this,"讀取數據",Toast.LENGTH_SHORT).show();
+                    if(connFlag)
+                    {
+                        Intent intent = new Intent();
+                        //startActivity(intent);
+                    }else{
+                        Toast.makeText(BluetoothActivity.this,"請先進行連接",Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 case "寫入數據":
-                    Toast.makeText(BluetoothActivity.this,"寫入數據",Toast.LENGTH_SHORT).show();
+                    if(connFlag)
+                    {
+                        Intent intent = new Intent();
+                        //startActivity(intent);
+                    }else{
+                        Toast.makeText(BluetoothActivity.this,"請先進行連接",Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 case "參數設置":
-                    Toast.makeText(BluetoothActivity.this,"參數設置",Toast.LENGTH_SHORT).show();
+                    if(connFlag)
+                    {
+                        Intent intent = new Intent();
+                        //startActivity(intent);
+                    }else{
+                        Toast.makeText(BluetoothActivity.this,"請先進行連接",Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 case "鎖定標籤":
-                    Toast.makeText(BluetoothActivity.this,"鎖定標籤",Toast.LENGTH_SHORT).show();
+                    if(connFlag)
+                    {
+                        Intent intent = new Intent();
+                        //startActivity(intent);
+                    }else{
+                        Toast.makeText(BluetoothActivity.this,"請先進行連接",Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 case "銷毀標籤":
-                    Toast.makeText(BluetoothActivity.this,"銷毀標籤",Toast.LENGTH_SHORT).show();
+                    if(connFlag)
+                    {
+                        Intent intent = new Intent();
+                        //startActivity(intent);
+                    }else{
+                        Toast.makeText(BluetoothActivity.this,"請先進行連接",Toast.LENGTH_SHORT).show();
+                    }
                     break;
                 case "退出":
                     finish();
