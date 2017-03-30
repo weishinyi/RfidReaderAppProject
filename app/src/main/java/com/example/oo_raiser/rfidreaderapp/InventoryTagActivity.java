@@ -35,7 +35,9 @@ import java.util.Map;
 
 public class InventoryTagActivity extends AppCompatActivity {
 
-    // 宣告UI元件
+    private String TAG = "InventoryTagActivity";
+
+    //UI item
     private EditText editCountTag;
     private Button buttonClear;
     private Button buttonreadTag;
@@ -49,14 +51,11 @@ public class InventoryTagActivity extends AppCompatActivity {
     // 超高頻指令管理者
     private NewSendCommendManager manager;
 
-
-    // 藍牙連接輸入輸出流
+    //bluetooth input/output stream
     private InputStream is;
     private OutputStream os;
 
     private boolean isSingleRead = false;
-
-    private String TAG = "InventoryTagActivity";
 
     private CommandThread commthread;
     public static final int READ_TAG = 2001;
@@ -120,7 +119,7 @@ public class InventoryTagActivity extends AppCompatActivity {
 
     }
 
-    // 取得UI元件
+    //initialize the UI
     private void initUI() {
         editCountTag = (EditText) findViewById(R.id.editText_tag_count);
         buttonClear = (Button) findViewById(R.id.button_clear_data);
@@ -148,10 +147,10 @@ public class InventoryTagActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    // 設置監聽器
+    //the button & RadioButton listener
     private void listner() {
 
-        //讀取單一標籤
+        //read tag by once
         rbSingle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
@@ -166,7 +165,7 @@ public class InventoryTagActivity extends AppCompatActivity {
             }
         });
 
-        //連續讀取標籤
+        //read tag by loop
         rbLoop.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
@@ -178,10 +177,10 @@ public class InventoryTagActivity extends AppCompatActivity {
             }
         });
 
-        //讀標籤button
+        //read tag button
         buttonreadTag.setOnClickListener(new ButtonreadtagListner());
 
-        //清空數據button
+        //clear button
         buttonClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
@@ -191,7 +190,7 @@ public class InventoryTagActivity extends AppCompatActivity {
             }
         });
 
-        //Send datas to server
+        //Send button
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,7 +199,6 @@ public class InventoryTagActivity extends AppCompatActivity {
         });
 
     }//end listner
-
 
     List<InventoryInfo> listTag;//單次讀標籤返回的數據
     boolean isRuning = false;

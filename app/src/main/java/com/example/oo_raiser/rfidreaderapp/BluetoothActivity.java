@@ -282,7 +282,8 @@ public class BluetoothActivity extends AppCompatActivity {
 
         //initialize menu
         arrayMenu = new ArrayList<HashMap<String, String>>();
-        String[] array = {"連接", "斷開", "識別標籤", "讀取數據", "寫入數據", "參數設置", "鎖定標籤", "銷毀標籤", "退出"};
+        //String[] array = {"連接", "斷開", "識別標籤", "讀取數據", "寫入數據", "參數設置", "鎖定標籤", "銷毀標籤", "退出"};
+        String[] array = {"連接", "斷開", "識別標籤", "參數設置", "退出"};
         for(int i=0; i<array.length; i++) {
             HashMap<String, String> item = new HashMap<String, String>();
             item.put("menuItem", array[i]);
@@ -518,8 +519,8 @@ public class BluetoothActivity extends AppCompatActivity {
                 case "參數設置":
                     if(connFlag)
                     {
-                        Intent intent = new Intent();
-                        //startActivity(intent);
+                        Intent intent = new Intent(BluetoothActivity.this, SettingActivity.class);
+                        startActivity(intent);
                     }else{
                         Toast.makeText(BluetoothActivity.this,"請先進行連接",Toast.LENGTH_SHORT).show();
                     }
