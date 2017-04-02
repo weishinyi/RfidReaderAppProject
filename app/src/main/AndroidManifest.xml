@@ -31,7 +31,8 @@
         <activity android:name=".BluetoothActivity" />
         <activity android:name=".HelpAcivity" />
         <activity android:name=".InventoryTagActivity" />
-        <activity android:name=".SettingActivity"></activity>
+        <activity android:name=".SettingActivity" />
+        <activity android:name=".QueryActivity"></activity>
     </application>
 
 </manifest>

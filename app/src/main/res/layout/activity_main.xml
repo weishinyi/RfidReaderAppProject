@@ -18,13 +18,24 @@
         android:text="@string/bluetooth_option" />
 
     <Button
-        android:id="@+id/button_help"
+        android:id="@+id/buttonQuery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         style="@style/FontStyle"
         android:layout_marginTop="10dp"
         android:layout_below="@+id/buttonBluetoothOption"
+        android:text="Query Data"
+        />
+
+    <Button
+        android:id="@+id/button_help"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        style="@style/FontStyle"
+        android:layout_marginTop="10dp"
+        android:layout_below="@+id/buttonQuery"
         android:text="@string/help" />
 
     <Button

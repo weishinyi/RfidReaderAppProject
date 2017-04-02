@@ -11,6 +11,7 @@ import android.view.View.OnClickListener;
 public class MainActivity extends AppCompatActivity {
 
     private Button buttonBluetooth ;
+    private Button buttonQuery;
     private Button buttonHelp;
     private Button buttonExit ;
     private TextView textTitle;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private void initView()
     {
         buttonBluetooth = (Button) findViewById(R.id.buttonBluetoothOption);
+        buttonQuery =  (Button) findViewById(R.id.buttonQuery);
         buttonExit = (Button) findViewById(R.id.button_exit);
         buttonHelp = (Button) findViewById(R.id.button_help);
     }
@@ -47,6 +49,15 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 Intent intent = new Intent(MainActivity.this, BluetoothActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        //query
+        buttonQuery.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, QueryActivity.class);
                 startActivity(intent);
             }
         });

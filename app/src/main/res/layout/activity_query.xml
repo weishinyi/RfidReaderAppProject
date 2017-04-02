@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.oo_raiser.rfidreaderapp.QueryActivity">
+
+    <include layout="@layout/title"/>
+
+    <TextView
+        android:id="@+id/textView_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:layout_marginRight="5dp"
+        android:gravity="right"
+        android:text="n秒前更新"
+        />
+
+    <ListView
+        android:id="@+id/listView_queryData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/button_refresh"
+        android:layout_marginTop="70dp">
+    </ListView>
+
+
+    <Button
+        android:id="@+id/button_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="刷新"/>
+
+</RelativeLayout>
