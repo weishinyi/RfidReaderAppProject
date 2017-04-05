@@ -31,7 +31,7 @@ public class webApiUtil {
     public final static String CONTENTWEB = "text/html; charset=UTF-8";
 
     //web api url
-    public final static String QueryRecodeUrl = "http://...";
+    public final static String QueryRecodeUrl = "http://140.134.26.173:1337/api/webapi/Get/";
     public final static String TodoyNewsUrl = "http://10.10.28.204:39643/api/TodayNews/";
 
     //token

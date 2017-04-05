@@ -213,7 +213,7 @@ public class QueryActivity extends AppCompatActivity {
                 {
                     Toast.makeText(QueryActivity.this, resultStr, Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(QueryActivity.this, "get data success!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(QueryActivity.this, resultStr, Toast.LENGTH_SHORT).show();
 
                     //update listView
                     //adpTodayNews = new TodayNewsInfoAp(News_TodayNewsActivity.this, jsonArray);

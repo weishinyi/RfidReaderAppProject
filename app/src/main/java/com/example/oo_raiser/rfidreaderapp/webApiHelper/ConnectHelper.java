@@ -50,16 +50,13 @@ public class ConnectHelper {
         info = connManger.getActiveNetworkInfo();
 
         try{
-            //create the POST Request
+            //create the GET Request
             URL url = new URL(urlStr);
             connection = (HttpURLConnection)url.openConnection();
-            connection.setReadTimeout(10000);
-            connection.setConnectTimeout(15000);
-            connection.setUseCaches(false);
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
+            connection.setReadTimeout(3000);
+            connection.setConnectTimeout(3000);
             connection.setRequestMethod("GET");
-            connection.setRequestProperty("Content-Type","application/json; UTF-8");
+            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
 
             //connect
             connection.connect();
@@ -114,7 +111,7 @@ public class ConnectHelper {
                 if(connection!=null)
                 {
                     //read data
-                    BufferedReader bf = new BufferedReader(new InputStreamReader(connection.getInputStream(),"UTF-8"));
+                    BufferedReader bf = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
                     StringBuffer buffer = new StringBuffer();
                     String s = null;
                     while((s = bf.readLine()) != null)
@@ -122,6 +119,7 @@ public class ConnectHelper {
                         buffer.append(s);
                     }
                     dataStr = buffer.toString();
+
                 }else{
                     dataStr = webApiUtil.SERVER_CONNENTFAIL;
                 }
