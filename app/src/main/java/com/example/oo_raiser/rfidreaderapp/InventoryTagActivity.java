@@ -1,5 +1,10 @@
 package com.example.oo_raiser.rfidreaderapp;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +28,11 @@ import com.example.oo_raiser.rfidreaderapp.command.NewSendCommendManager;
 import com.example.oo_raiser.rfidreaderapp.command.Tools;
 import com.example.oo_raiser.rfidreaderapp.entity.EPC;
 import com.example.oo_raiser.rfidreaderapp.util.Util;
+import com.example.oo_raiser.rfidreaderapp.webApiHelper.ConnectHelper;
+import com.example.oo_raiser.rfidreaderapp.webApiHelper.webApiUtil;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +42,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class InventoryTagActivity extends AppCompatActivity {
 
@@ -194,7 +205,39 @@ public class InventoryTagActivity extends AppCompatActivity {
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(InventoryTagActivity.this,"send data to server...",Toast.LENGTH_SHORT).show();
+                try{
+
+                    if(listEPC.size()!=0)
+                    {
+                        //prepare the JSONObject data
+                        JSONObject jsonObj = new JSONObject();
+                        jsonObj.put("userId", "1");
+                        jsonObj.put("locationId","1");
+
+                        JSONArray jArray = new JSONArray();
+                        for(EPC item : listEPC)
+                        {
+                            JSONObject j = new JSONObject();
+                            j.put("Epc",item.getEpc());
+                            j.put("count",item.getCount());
+
+                            jArray.put(j);
+                        }
+                        jsonObj.put("epcList",jArray);
+
+
+                        //new 一個 SendDataToServerRequestTask 來執行
+                        new InventoryTagActivity.SendDataToServerRequestTask(InventoryTagActivity.this).execute(jsonObj);
+
+                    }else{
+                        Toast.makeText(InventoryTagActivity.this, "沒有資料需要傳送",Toast.LENGTH_SHORT).show();
+                    }
+
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
             }
         });
 
@@ -419,8 +462,85 @@ public class InventoryTagActivity extends AppCompatActivity {
         });
     }
 
+    // class
+    //AsyncTask<Params, Progress, Result>
+    //  Params: 參數，你要餵什麼樣的參數給它。
+    //  Progress: 進度條，進度條的資料型態要用哪種
+    //  Result: 結果，你希望這個背景任務最後會有什麼樣的結果回傳給你。
+    public class SendDataToServerRequestTask extends AsyncTask<JSONObject, Void, String>
+    {
+        private Context myContext;
+        private ProgressDialog myDialog;
+
+        ConnectivityManager connManager;
+        NetworkInfo networkInfo;
+        ConnectHelper service;
+
+        //Constructor
+        public SendDataToServerRequestTask(Context context)
+        {
+            this.myContext = context;
+        }
+
+        //onPreExecute: 執行前，一些基本設定可以在這邊做。
+        @Override
+        protected void onPreExecute() {
+            //get item to connect to network
+            connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            networkInfo = connManager.getActiveNetworkInfo();
+            service = new ConnectHelper(connManager);
+
+            //show the ProgressDialog
+            myDialog = new ProgressDialog(myContext);
+            myDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            myDialog.setMessage(webApiUtil.DOWNLOADING);
+            myDialog.setCancelable(false);
+            myDialog.show();
+        }
 
 
+        //doInBackground: 執行中，在背景做任務。
+        @Override
+        protected String doInBackground(JSONObject... params) {
+            String result = null;
+
+            //判斷是否有開啟網路連線
+            if(networkInfo!=null && networkInfo.isConnected())
+            {
+                String urlStr = webApiUtil.SendRecodeUrl;
+                result = service.RequestWebApiPost(urlStr, params[0]);
+            }
+
+            return result;
+        }
+
+
+        //onPostExecute: 執行後，最後的結果會在這邊。
+        @Override
+        protected void onPostExecute(String resultStr) {
+            //Respond to the user
+            try{
+                if(resultStr==null)
+                {
+                    Toast.makeText(InventoryTagActivity.this, "No Connection!!\n請開啟網路連線！", Toast.LENGTH_SHORT).show();
+                }else if(resultStr.equals(webApiUtil.SERVER_CONNENTFAIL) || resultStr.equals(webApiUtil.SERVER_CONNENTFAIL) || resultStr.equals(webApiUtil.WIFI_CONNECTFAIL))
+                {
+                    Toast.makeText(InventoryTagActivity.this, resultStr, Toast.LENGTH_SHORT).show();
+                }else{
+                    //send data to server success!
+                    Toast.makeText(InventoryTagActivity.this, resultStr, Toast.LENGTH_SHORT).show();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            //close the dialog
+            if (myDialog.isShowing())
+            {
+                myDialog.dismiss();
+            }
+        }
+    }
 
 
 }

@@ -213,7 +213,12 @@ public class QueryActivity extends AppCompatActivity {
                 {
                     Toast.makeText(QueryActivity.this, resultStr, Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(QueryActivity.this, resultStr, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(QueryActivity.this, "get data from server success!", Toast.LENGTH_SHORT).show();
+
+                    JSONObject jObj1 = new JSONObject("{\"phonetype\":\"N95\",\"cat\":\"WP\"}");
+                    JSONObject jObj2 = new JSONObject("{\"BarcodeList\":[{\"BarcodeSeq\":1,\"Barcode\":\"E2001AC1909BF2C0000EDFCA\",\"BarcodeCreateTime\":\"2016-07-04T15:28:46\",\"Car_ID\":3,\"Car_Number\":\"CAD-1234\",\"Emp_ID\":1,\"Emp_Name\":\"王小明       \",\"Loc_ID\":5,\"Loc_Name\":\"淹水的桃園機場\",\"Loc_Address\":\"桃園市大園區航站南路9號\",\"UpdateTime\":\"2016-07-04T15:28:46\",\"UpdateUser\":1,\"Count\":2}]}");
+
+                    JSONArray jsonArray = new JSONArray(resultStr);
 
                     //update listView
                     //adpTodayNews = new TodayNewsInfoAp(News_TodayNewsActivity.this, jsonArray);

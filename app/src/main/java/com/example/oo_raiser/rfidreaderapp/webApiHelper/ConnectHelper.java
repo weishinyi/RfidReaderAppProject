@@ -171,6 +171,7 @@ public class ConnectHelper {
                         buffer.append(s);
                     }
                     dataStr = buffer.toString();
+                    bf.close();
                 }else{
                     dataStr = webApiUtil.SERVER_CONNENTFAIL;
                 }
