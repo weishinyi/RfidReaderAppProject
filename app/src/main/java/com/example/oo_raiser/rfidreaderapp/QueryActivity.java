@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.oo_raiser.rfidreaderapp.command.QueryAdapter;
+import com.example.oo_raiser.rfidreaderapp.entity.Barcode;
 import com.example.oo_raiser.rfidreaderapp.webApiHelper.ConnectHelper;
 import com.example.oo_raiser.rfidreaderapp.webApiHelper.webApiUtil;
 
@@ -25,6 +27,8 @@ import org.json.JSONObject;
 import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QueryActivity extends AppCompatActivity {
 
@@ -215,15 +219,36 @@ public class QueryActivity extends AppCompatActivity {
                 }else{
                     Toast.makeText(QueryActivity.this, "get data from server success!", Toast.LENGTH_SHORT).show();
 
-                    JSONObject jObj1 = new JSONObject("{\"phonetype\":\"N95\",\"cat\":\"WP\"}");
-                    JSONObject jObj2 = new JSONObject("{\"BarcodeList\":[{\"BarcodeSeq\":1,\"Barcode\":\"E2001AC1909BF2C0000EDFCA\",\"BarcodeCreateTime\":\"2016-07-04T15:28:46\",\"Car_ID\":3,\"Car_Number\":\"CAD-1234\",\"Emp_ID\":1,\"Emp_Name\":\"王小明       \",\"Loc_ID\":5,\"Loc_Name\":\"淹水的桃園機場\",\"Loc_Address\":\"桃園市大園區航站南路9號\",\"UpdateTime\":\"2016-07-04T15:28:46\",\"UpdateUser\":1,\"Count\":2}]}");
+                    String jstr = resultStr.substring(1,resultStr.length()-1).replace("\\","");
+                    JSONArray jarr = new JSONObject(jstr).getJSONArray("BarcodeList");
+                    int jarrlen = jarr.length();
 
-                    JSONArray jsonArray = new JSONArray(resultStr);
+
+                    List<Barcode> listBarcode = new ArrayList<Barcode>(); //Barcode列表
+                    for(int i=0; i<jarrlen; i++)
+                    {
+                        JSONObject job = jarr.getJSONObject(i);
+                        Barcode b = new Barcode();
+                        b.setBarcodeSeq(Integer.parseInt(job.getString("BarcodeSeq")));
+                        b.setBarcode(job.getString("Barcode"));
+                        b.setBarcodeCreateTime(job.getString("BarcodeCreateTime"));
+                        b.setCar_ID(Integer.parseInt(job.getString("Car_ID")));
+                        b.setCar_Number(job.getString("Car_Number"));
+                        b.setEmp_ID(Integer.parseInt(job.getString("Emp_ID")));
+                        b.setEmp_Name( job.getString("Emp_Name").toString().trim());
+                        b.setLoc_ID(Integer.parseInt(job.getString("Loc_ID")));
+                        b.setLoc_Name(job.getString("Loc_Name"));
+                        b.setLoc_Address(job.getString("Loc_Address"));
+                        b.setUpdateTime(job.getString("UpdateTime"));
+                        b.setUpdateUserId(Integer.parseInt(job.getString("UpdateUser")));
+                        b.setCount(Integer.parseInt( job.getString("Count")));
+
+                        listBarcode.add(b);
+                    }
 
                     //update listView
-                    //adpTodayNews = new TodayNewsInfoAp(News_TodayNewsActivity.this, jsonArray);
-                    //adpTodayNews.setTodayNewsInforList(jsonArray);
-                    //listView_queryData.setAdapter(adpTodayNews);
+                    QueryAdapter adpQuery = new QueryAdapter(QueryActivity.this, listBarcode);
+                    listView_queryData.setAdapter(adpQuery);
 
                 }
             }catch (Exception e){
