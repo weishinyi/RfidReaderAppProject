@@ -15,9 +15,12 @@ import android.widget.Toast;
 
 import com.example.oo_raiser.rfidreaderapp.bluetooth.ConnectedThread;
 import com.example.oo_raiser.rfidreaderapp.command.NewSendCommendManager;
+import com.example.oo_raiser.rfidreaderapp.entity.GlobalVariable;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.oo_raiser.rfidreaderapp.util.Util.context;
 
 public class SettingActivity extends AppCompatActivity {
     private String TAG = "SettingActivity";
@@ -116,6 +119,10 @@ public class SettingActivity extends AppCompatActivity {
             @Override
             public void onClick(View arg0) {
                 if(cmdManager.setWorkArea(area) == 0){
+                    //set globalVariable
+                    GlobalVariable globalVariable = ((GlobalVariable)getApplicationContext());
+                    globalVariable.setLocId(area);
+
                     Toast.makeText(getApplicationContext(), "設置成功", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(getApplicationContext(), "設置失敗", Toast.LENGTH_SHORT).show();
@@ -144,16 +151,16 @@ public class SettingActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> adapter, View view,
                                        int position, long id) {
                 String mArea = listWorkarea.get(position);
-                if("中國1".equals(mArea)){
+                if("中國".equals(mArea)){
                     area = 1;
-                }else if("中國2".equals(mArea)){
-                    area = 4;
-                }else if("美國".equals(mArea)){
+                }else if("中山大學".equals(mArea)){
                     area = 2;
-                }else if("歐洲".equals(mArea)){
+                }else if("陽明大學".equals(mArea)){
                     area = 3;
-                }else if("韓國".equals(mArea)){
-                    area = 6;
+                }else if("台灣大學".equals(mArea)){
+                    area = 4;
+                }else if("淹水的桃園機場".equals(mArea)){
+                    area = 5;
                 }
                 Log.e(TAG, area + "");
             }

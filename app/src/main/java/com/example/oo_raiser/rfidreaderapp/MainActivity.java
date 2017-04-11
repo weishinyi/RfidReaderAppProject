@@ -8,6 +8,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.view.View.OnClickListener;
 
+import com.example.oo_raiser.rfidreaderapp.entity.GlobalVariable;
+
+import static com.example.oo_raiser.rfidreaderapp.util.Util.context;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button buttonBluetooth ;
@@ -29,6 +33,17 @@ public class MainActivity extends AppCompatActivity {
 
         //監聽按鈕
         this.listener();
+
+        //初始化GlobalVariable
+        try{
+            GlobalVariable globalVariable = ((GlobalVariable)getApplicationContext());
+            globalVariable.setUserId(1);
+            globalVariable.setLocId(1);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
     }
 
     //initialize the UI
@@ -81,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
 }

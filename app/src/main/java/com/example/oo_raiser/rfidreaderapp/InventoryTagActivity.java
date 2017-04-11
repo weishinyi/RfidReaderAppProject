@@ -27,6 +27,7 @@ import com.example.oo_raiser.rfidreaderapp.command.InventoryInfo;
 import com.example.oo_raiser.rfidreaderapp.command.NewSendCommendManager;
 import com.example.oo_raiser.rfidreaderapp.command.Tools;
 import com.example.oo_raiser.rfidreaderapp.entity.EPC;
+import com.example.oo_raiser.rfidreaderapp.entity.GlobalVariable;
 import com.example.oo_raiser.rfidreaderapp.util.Util;
 import com.example.oo_raiser.rfidreaderapp.webApiHelper.ConnectHelper;
 import com.example.oo_raiser.rfidreaderapp.webApiHelper.webApiUtil;
@@ -43,6 +44,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+
+import static com.example.oo_raiser.rfidreaderapp.util.Util.context;
 
 public class InventoryTagActivity extends AppCompatActivity {
 
@@ -209,10 +212,15 @@ public class InventoryTagActivity extends AppCompatActivity {
 
                     if(listEPC.size()!=0)
                     {
+                        //get userId and locId
+                        GlobalVariable globalVariable = ((GlobalVariable)getApplicationContext());
+                        String userId = Integer.toString(globalVariable.getUserId());
+                        String locId = Integer.toString(globalVariable.getLocId());
+
                         //prepare the JSONObject data
                         JSONObject jsonObj = new JSONObject();
-                        jsonObj.put("userId", "1");
-                        jsonObj.put("locationId","1"); //需要修改
+                        jsonObj.put("userId", userId);
+                        jsonObj.put("locationId",locId);
 
                         JSONArray jArray = new JSONArray();
                         for(EPC item : listEPC)

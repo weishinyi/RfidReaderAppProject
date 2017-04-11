@@ -23,11 +23,11 @@
         <item>115200</item>
     </string-array>
     <string-array name="work_area">
-        <item>中國1</item>
-        <item>中國2</item>
-        <item>美國</item>
-        <item>歐洲</item>
-        <item>韓國</item>
+        <item>中國</item>
+        <item>中山大學</item>
+        <item>陽明大學</item>
+        <item>台灣大學</item>
+        <item>淹水的桃園機場</item>
     </string-array>
     <string-array name="lock_membank">
         <item>銷毀密碼</item>
