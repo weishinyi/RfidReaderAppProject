@@ -135,8 +135,8 @@ public class QueryActivity extends AppCompatActivity {
             @Override
             public void onClick(View v)
             {
-               //do something
-                Toast.makeText(QueryActivity.this,"刷新資料",Toast.LENGTH_SHORT).show();
+                //do something
+                //Toast.makeText(QueryActivity.this,"刷新資料",Toast.LENGTH_SHORT).show();
                 timeCount = 0;
 
                 //get data from server and refresh listView
@@ -217,7 +217,7 @@ public class QueryActivity extends AppCompatActivity {
                 {
                     Toast.makeText(QueryActivity.this, resultStr, Toast.LENGTH_SHORT).show();
                 }else{
-                    Toast.makeText(QueryActivity.this, "get data from server success!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(QueryActivity.this, "刷新資料!", Toast.LENGTH_SHORT).show();
 
                     String jstr = resultStr.substring(1,resultStr.length()-1).replace("\\","");
                     JSONArray jarr = new JSONObject(jstr).getJSONArray("BarcodeList");
@@ -231,7 +231,7 @@ public class QueryActivity extends AppCompatActivity {
                         Barcode b = new Barcode();
                         b.setBarcodeSeq(Integer.parseInt(job.getString("BarcodeSeq")));
                         b.setBarcode(job.getString("Barcode"));
-                        b.setBarcodeCreateTime(job.getString("BarcodeCreateTime"));
+                        b.setBarcodeCreateTime(job.getString("BarcodeCreateTime").replace("T","  "));
                         b.setCar_ID(Integer.parseInt(job.getString("Car_ID")));
                         b.setCar_Number(job.getString("Car_Number"));
                         b.setEmp_ID(Integer.parseInt(job.getString("Emp_ID")));

@@ -212,7 +212,7 @@ public class InventoryTagActivity extends AppCompatActivity {
                         //prepare the JSONObject data
                         JSONObject jsonObj = new JSONObject();
                         jsonObj.put("userId", "1");
-                        jsonObj.put("locationId","1");
+                        jsonObj.put("locationId","1"); //需要修改
 
                         JSONArray jArray = new JSONArray();
                         for(EPC item : listEPC)

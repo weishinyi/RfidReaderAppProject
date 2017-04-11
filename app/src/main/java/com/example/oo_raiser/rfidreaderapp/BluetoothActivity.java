@@ -485,6 +485,8 @@ public class BluetoothActivity extends AppCompatActivity {
                            textTitle.setText("已斷開連接");
                            connFlag = false;
                        }
+                    }else{
+                        Toast.makeText(getApplicationContext(),"並未連接裝置",Toast.LENGTH_SHORT ).show();
                     }
                     break;
                 case "識別標籤":
@@ -494,8 +496,6 @@ public class BluetoothActivity extends AppCompatActivity {
                         startActivity(intent);
                     }else{
                         Toast.makeText(BluetoothActivity.this,"請先進行連接",Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(BluetoothActivity.this, InventoryTagActivity.class);
-                        startActivity(intent);
                     }
                     break;
                 case "讀取數據":
